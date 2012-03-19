@@ -139,7 +139,9 @@ public class OSGiRunMojo
             final MavenProject pomProject = mavenProjectBuilder.buildFromRepository(pomArtifact, remoteRepositories, localRepository);
             final Set resolvedArtifacts = pomProject.createArtifacts(this.artifactFactory, null, null);
             final ArtifactFilter filter = new OrArtifactFilter(new ScopeArtifactFilter("compile"), new ScopeArtifactFilter("runtime"));
+            getLog().info("Resolving transitively");
             final ArtifactResolutionResult arr = resolver.resolveTransitively(resolvedArtifacts, pomArtifact, pomProject.getManagedVersionMap(), localRepository, remoteRepositories, artifactMetadataSource, filter);
+            getLog().info("Well that worked");
             Set<Artifact> artifacts = arr.getArtifacts();
             Set<URL> urls = new HashSet<URL>();
             for (Artifact artifact : artifacts) {
