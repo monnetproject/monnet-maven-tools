@@ -3,17 +3,17 @@ package eu.monnetproject.osgirun;
 /*
  * Copyright 2001-2005 The Apache Software Foundation.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 import aQute.lib.io.IO;
 import aQute.lib.osgi.Analyzer;
@@ -68,35 +68,62 @@ public class OSGiRunMojo
     /**
      * The maven project.
      *
-     * @parameter expression="${project}"
-     * @required
+     * @parameter expression="${project}" @required
      */
     protected MavenProject project;
-    /** @component */
+    /**
+     * @component
+     */
     private MavenProjectBuilder mavenProjectBuilder;
-    /** @component */
+    /**
+     * @component
+     */
     private org.apache.maven.artifact.factory.ArtifactFactory artifactFactory;
-    /** @component */
+    /**
+     * @component
+     */
     private org.apache.maven.artifact.resolver.ArtifactResolver resolver;
-    /**@parameter default-value="${localRepository}" */
+    /**
+     * @parameter default-value="${localRepository}"
+     */
     private org.apache.maven.artifact.repository.ArtifactRepository localRepository;
-    /** @parameter default-value="${project.remoteArtifactRepositories}" */
+    /**
+     * @parameter default-value="${project.remoteArtifactRepositories}"
+     */
     private java.util.List remoteRepositories;
-    /** @component */
+    /**
+     * @component
+     */
     private ArtifactMetadataSource artifactMetadataSource;
-    /** @parameter expression="${osgirun.fwGroupId}" default-value="org.apache.felix" */
+    /**
+     * @parameter expression="${osgirun.fwGroupId}"
+     * default-value="org.apache.felix"
+     */
     private String fwGroupId;
-    /** @parameter expression="${osgirun.fwArtifactId}" default-value="org.apache.felix.framework" */
+    /**
+     * @parameter expression="${osgirun.fwArtifactId}"
+     * default-value="org.apache.felix.framework"
+     */
     private String fwArtifactId;
-    /** @parameter expression="${osgirun.fwVersion}" default-value="4.0.2" */
+    /**
+     * @parameter expression="${osgirun.fwVersion}" default-value="4.0.2"
+     */
     private String fwVersion;
-    /** @parameter */
+    /**
+     * @parameter
+     */
     private String[] osgiProps;
-    /** @parameter expression="${osgirun.felixBundles}" default-value=true */
+    /**
+     * @parameter expression="${osgirun.felixBundles}" default-value=true
+     */
     private boolean felixBundles;
-    /** @parameter expression="${osgirun.excludeBundles}" default-value=null */
+    /**
+     * @parameter expression="${osgirun.excludeBundles}" default-value=null
+     */
     private String excludedBundles;
-    /** @parameter expression="${integration.test}" default-value=false */
+    /**
+     * @parameter expression="${integration.test}" default-value=false
+     */
     private boolean integrationTest;
     private final List<String> excludedBundleNames = new ArrayList<String>(Arrays.asList(new String[]{
                 "org.osgi.foundation",
@@ -122,8 +149,17 @@ public class OSGiRunMojo
             }
             final Artifact fwArtifact = artifactFactory.createArtifact(fwGroupId, fwArtifactId, fwVersion, null, "jar");
             resolver.resolve(fwArtifact, remoteRepositories, localRepository);
-            resolver.resolve(project.getArtifact(), remoteRepositories, localRepository);
-            urls.add(project.getArtifact().getFile().toURI().toURL());
+            try {
+                resolver.resolve(project.getArtifact(), remoteRepositories, localRepository);
+                urls.add(project.getArtifact().getFile().toURI().toURL());
+            } catch (Exception x) {
+                File artifactLocal = new File("target/" + project.getArtifactId() + project.getArtifactId() + ".jar");
+                if (artifactLocal.exists()) {
+                    urls.add(artifactLocal.toURI().toURL());
+                } else {
+                    throw x;
+                }
+            }
             if (felixBundles) {
                 addFelixBundles(urls);
             }
@@ -133,7 +169,6 @@ public class OSGiRunMojo
                 public int compare(URL o1, URL o2) {
                     return o1.toString().compareTo(o2.toString());
                 }
-                
             });
             runOSGi(fwArtifact.getFile().toURI().toURL(), urlList);
         } catch (Exception x) {
@@ -257,13 +292,14 @@ public class OSGiRunMojo
     }
 
     private Map<String, String> props() throws MojoExecutionException {
-        if(osgiProps != null) {
+        if (osgiProps != null) {
             final HashMap<String, String> map = new HashMap<String, String>();
-            for(String osgiProp : osgiProps) {
-                if(osgiProp == null || osgiProp.equals("null"))
+            for (String osgiProp : osgiProps) {
+                if (osgiProp == null || osgiProp.equals("null")) {
                     continue;
+                }
                 final String[] kv = osgiProp.split("=");
-                if(kv.length != 2) {
+                if (kv.length != 2) {
                     throw new MojoExecutionException("Bad OSGi property: " + osgiProp);
                 } else {
                     map.put(kv[0], kv[1]);
@@ -322,7 +358,7 @@ public class OSGiRunMojo
                 excludedBundleNames.add(bName.trim());
             }
         }
-        if(integrationTest) {
+        if (integrationTest) {
             getLog().info("Setting integration testing to true");
             System.setProperty("eu.monnetproject.framework.test", "true");
         }
