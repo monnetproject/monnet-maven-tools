@@ -149,17 +149,12 @@ public class OSGiRunMojo
             }
             final Artifact fwArtifact = artifactFactory.createArtifact(fwGroupId, fwArtifactId, fwVersion, null, "jar");
             resolver.resolve(fwArtifact, remoteRepositories, localRepository);
-            try {
+            File artifactLocal = new File("target/" + project.getGroupId() + "." + project.getArtifactId() + ".jar");
+            if (artifactLocal.exists()) {
+                urls.add(artifactLocal.toURI().toURL());
+            } else {
                 resolver.resolve(project.getArtifact(), remoteRepositories, localRepository);
                 urls.add(project.getArtifact().getFile().toURI().toURL());
-            } catch (Exception x) {
-                File artifactLocal = new File("target/" + project.getGroupId() + "." + project.getArtifactId() + ".jar");
-                if (artifactLocal.exists()) {
-                    urls.add(artifactLocal.toURI().toURL());
-                } else {
-                    getLog().info(artifactLocal + " does not exist");
-                    throw x;
-                }
             }
             if (felixBundles) {
                 addFelixBundles(urls);
