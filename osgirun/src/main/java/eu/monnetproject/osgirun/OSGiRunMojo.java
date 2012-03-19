@@ -156,7 +156,7 @@ public class OSGiRunMojo
                 urls.add(project.getArtifact().getFile().toURI().toURL());
             } catch (Exception x) {
                 getLog().info("Hey it failed!");
-                File artifactLocal = new File("target/" + project.getArtifactId() + project.getArtifactId() + ".jar");
+                File artifactLocal = new File("target/" + project.getArtifactId() + "."+project.getArtifactId() + ".jar");
                 if (artifactLocal.exists()) {
                     urls.add(artifactLocal.toURI().toURL());
                 } else {
