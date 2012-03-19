@@ -139,9 +139,7 @@ public class OSGiRunMojo
             final MavenProject pomProject = mavenProjectBuilder.buildFromRepository(pomArtifact, remoteRepositories, localRepository);
             final Set resolvedArtifacts = pomProject.createArtifacts(this.artifactFactory, null, null);
             final ArtifactFilter filter = new OrArtifactFilter(new ScopeArtifactFilter("compile"), new ScopeArtifactFilter("runtime"));
-            getLog().info("Resolving transitively");
             final ArtifactResolutionResult arr = resolver.resolveTransitively(resolvedArtifacts, pomArtifact, pomProject.getManagedVersionMap(), localRepository, remoteRepositories, artifactMetadataSource, filter);
-            getLog().info("Well that worked");
             Set<Artifact> artifacts = arr.getArtifacts();
             Set<URL> urls = new HashSet<URL>();
             for (Artifact artifact : artifacts) {
@@ -152,9 +150,12 @@ public class OSGiRunMojo
             final Artifact fwArtifact = artifactFactory.createArtifact(fwGroupId, fwArtifactId, fwVersion, null, "jar");
             resolver.resolve(fwArtifact, remoteRepositories, localRepository);
             try {
+                getLog().info("Resolving main artifact");
                 resolver.resolve(project.getArtifact(), remoteRepositories, localRepository);
+                getLog().info("That also worked");
                 urls.add(project.getArtifact().getFile().toURI().toURL());
             } catch (Exception x) {
+                getLog().info("Hey it failed!");
                 File artifactLocal = new File("target/" + project.getArtifactId() + project.getArtifactId() + ".jar");
                 if (artifactLocal.exists()) {
                     urls.add(artifactLocal.toURI().toURL());
