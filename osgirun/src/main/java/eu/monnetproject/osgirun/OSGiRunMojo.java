@@ -150,13 +150,10 @@ public class OSGiRunMojo
             final Artifact fwArtifact = artifactFactory.createArtifact(fwGroupId, fwArtifactId, fwVersion, null, "jar");
             resolver.resolve(fwArtifact, remoteRepositories, localRepository);
             try {
-                getLog().info("Resolving main artifact");
                 resolver.resolve(project.getArtifact(), remoteRepositories, localRepository);
-                getLog().info("That also worked");
                 urls.add(project.getArtifact().getFile().toURI().toURL());
             } catch (Exception x) {
-                getLog().info("Hey it failed!");
-                File artifactLocal = new File("target/" + project.getArtifactId() + "." + project.getArtifactId() + ".jar");
+                File artifactLocal = new File("target/" + project.getGroupId() + "." + project.getArtifactId() + ".jar");
                 if (artifactLocal.exists()) {
                     urls.add(artifactLocal.toURI().toURL());
                 } else {
