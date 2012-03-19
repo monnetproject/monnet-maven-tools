@@ -96,6 +96,8 @@ public class OSGiRunMojo
     private boolean felixBundles;
     /** @parameter expression="${osgirun.excludeBundles}" default-value=null */
     private String excludedBundles;
+    /** @parameter expression="${integration.test}" default-value=false */
+    private boolean integrationTest;
     private final List<String> excludedBundleNames = new ArrayList<String>(Arrays.asList(new String[]{
                 "org.osgi.foundation",
                 "org.apache.felix.framework",
@@ -319,6 +321,10 @@ public class OSGiRunMojo
             for (String bName : excludedBundles.split(",")) {
                 excludedBundleNames.add(bName.trim());
             }
+        }
+        if(integrationTest) {
+            getLog().info("Setting integration testing to true");
+            System.setProperty("eu.monnetproject.framework.test", "true");
         }
     }
 }
