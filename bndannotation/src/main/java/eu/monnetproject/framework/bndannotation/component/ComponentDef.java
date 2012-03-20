@@ -50,9 +50,10 @@ public class ComponentDef {
 	}
 
 	public Tag getTag() {
-		Tag component = new Tag("scr:component");
-		component.addAttribute("xmlns:scr", NAMESPACE_STEM + "/" + version);
-		component.addAttribute("name", name);
+		//Tag component = new Tag("scr:component");
+		//component.addAttribute("xmlns:scr", NAMESPACE_STEM + "/" + version);
+            Tag component = new Tag("component");
+		component.addAttribute("name", name == null ? implementation : name);
 
 		if (servicefactory != null)
 			component.addAttribute("servicefactory", servicefactory);
@@ -122,10 +123,10 @@ public class ComponentDef {
 			property.addContent(sb.toString());
 		}
 
-		for (String entry : properties) {
-			Tag properties = new Tag(component, "properties");
-			properties.addAttribute("entry", entry);
-		}
+//		for (String entry : properties) {
+//			Tag properties = new Tag(component, "properties");
+//			properties.addAttribute("entry", entry);
+//		}
 		return component;
 	}
 
