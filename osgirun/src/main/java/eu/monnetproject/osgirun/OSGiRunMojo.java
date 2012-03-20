@@ -31,6 +31,7 @@ import org.osgi.framework.launch.FrameworkFactory;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -48,6 +49,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.project.MavenProject;
@@ -149,13 +152,20 @@ public class OSGiRunMojo
             }
             final Artifact fwArtifact = artifactFactory.createArtifact(fwGroupId, fwArtifactId, fwVersion, null, "jar");
             resolver.resolve(fwArtifact, remoteRepositories, localRepository);
-            final File artifactLocal = new File(System.getProperty("user.dir") + System.getProperty("file.separator") + pomProject.getBuild().getDirectory() + System.getProperty("path.separator") + pomProject.getBuild().getFinalName() + ".jar");
+            final File artifactLocal = new File(pomProject.getBuild().getDirectory() + System.getProperty("file.separator") + pomProject.getBuild().getFinalName() + ".jar");
             if (artifactLocal.exists()) {
                 urls.add(artifactLocal.toURI().toURL());
             } else {
-                getLog().warn("Could not locate the main artifact at " + artifactLocal.getPath() + " trying to use Maven resolver... this may not work");
-                resolver.resolve(project.getArtifact(), remoteRepositories, localRepository);
-                urls.add(project.getArtifact().getFile().toURI().toURL());
+                if (pomProject.getBuild().getDirectory().startsWith("http")) {
+                    final File artifactLocal2 = new File(System.getProperty("user.dir") + System.getProperty("file.separator") + "target" + System.getProperty("file.separator") + pomProject.getBuild().getFinalName() + ".jar");
+                    if (artifactLocal2.exists()) {
+                        urls.add(artifactLocal2.toURI().toURL());
+                    } else {
+                        resolveMainArtifactUsingMaven(artifactLocal, urls);
+                    }
+                } else {
+                    resolveMainArtifactUsingMaven(artifactLocal, urls);
+                }
             }
             if (felixBundles) {
                 addFelixBundles(urls);
@@ -172,6 +182,12 @@ public class OSGiRunMojo
             getLog().error("Could not run OSGi: " + x.getClass().getName() + " " + x.getMessage());
             throw new MojoExecutionException("", x);
         }
+    }
+
+    private void resolveMainArtifactUsingMaven(final File artifactLocal, Set<URL> urls) throws MalformedURLException, ArtifactNotFoundException, ArtifactResolutionException {
+        getLog().warn("Could not locate the main artifact at " + artifactLocal.getPath() + " trying to use Maven resolver... this may not work");
+        resolver.resolve(project.getArtifact(), remoteRepositories, localRepository);
+        urls.add(project.getArtifact().getFile().toURI().toURL());
     }
 
     private URL makeOSGi(File bundle) throws Exception {
