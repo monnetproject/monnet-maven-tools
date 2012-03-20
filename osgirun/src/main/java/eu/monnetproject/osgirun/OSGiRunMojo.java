@@ -149,7 +149,7 @@ public class OSGiRunMojo
             }
             final Artifact fwArtifact = artifactFactory.createArtifact(fwGroupId, fwArtifactId, fwVersion, null, "jar");
             resolver.resolve(fwArtifact, remoteRepositories, localRepository);
-            final File artifactLocal = new File(pomProject.getBuild().getOutputDirectory() + System.getProperty("path.seperator") + pomProject.getBuild().getFinalName() + ".jar");
+            final File artifactLocal = new File(pomProject.getBuild().getDirectory() + System.getProperty("path.separator") + pomProject.getBuild().getFinalName() + ".jar");
             if (artifactLocal.exists()) {
                 urls.add(artifactLocal.toURI().toURL());
             } else {
