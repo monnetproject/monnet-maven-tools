@@ -149,10 +149,11 @@ public class OSGiRunMojo
             }
             final Artifact fwArtifact = artifactFactory.createArtifact(fwGroupId, fwArtifactId, fwVersion, null, "jar");
             resolver.resolve(fwArtifact, remoteRepositories, localRepository);
-            File artifactLocal = new File("target/" + project.getGroupId() + "." + project.getArtifactId() + ".jar");
+            final File artifactLocal = new File(pomProject.getBuild().getOutputDirectory() + System.getProperty("path.seperator") + pomProject.getBuild().getFinalName() + ".jar");
             if (artifactLocal.exists()) {
                 urls.add(artifactLocal.toURI().toURL());
             } else {
+                getLog().warn("Could not locate the main artifact at " + artifactLocal.getPath() + " trying to use Maven resolver... this may not work");
                 resolver.resolve(project.getArtifact(), remoteRepositories, localRepository);
                 urls.add(project.getArtifact().getFile().toURI().toURL());
             }
