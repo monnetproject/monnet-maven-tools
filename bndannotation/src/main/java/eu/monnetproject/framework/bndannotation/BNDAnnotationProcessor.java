@@ -40,6 +40,7 @@ import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
+import org.apache.maven.model.Repository;
 import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
@@ -71,7 +72,7 @@ public class BNDAnnotationProcessor
     /**@parameter default-value="${localRepository}" */
     private org.apache.maven.artifact.repository.ArtifactRepository localRepository;
     /** @parameter default-value="${project.remoteArtifactRepositories}" */
-    private java.util.List remoteRepositories;
+    private java.util.List<?> remoteRepositories;
     /** @component */
     private ArtifactMetadataSource artifactMetadataSource;
     /**
@@ -87,6 +88,7 @@ public class BNDAnnotationProcessor
      */
     private File outputDirectory;
 
+    @Override
     public void execute()
             throws MojoExecutionException {
         try {
@@ -139,9 +141,10 @@ public class BNDAnnotationProcessor
 
         final Artifact pomArtifact = artifactFactory.createArtifact(project.getGroupId(), project.getArtifactId(), project.getVersion(), null, "pom");
         final MavenProject pomProject = mavenProjectBuilder.buildFromRepository(pomArtifact, remoteRepositories, localRepository);
-        final Set resolvedArtifacts = pomProject.createArtifacts(this.artifactFactory, null, null);
+        final Set<?> resolvedArtifacts = pomProject.createArtifacts(this.artifactFactory, null, null);
         final ArtifactFilter filter = new ScopeArtifactFilter("compile");
         final ArtifactResolutionResult arr = resolver.resolveTransitively(resolvedArtifacts, pomArtifact, pomProject.getManagedVersionMap(), localRepository, remoteRepositories, artifactMetadataSource, filter);
+        @SuppressWarnings("unchecked")
         Set<Artifact> artifacts = arr.getArtifacts();
         Set<URL> urls = new HashSet<URL>();
         for (Artifact artifact : artifacts) {
@@ -149,10 +152,10 @@ public class BNDAnnotationProcessor
         }
 
         URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-        Class sysclass = URLClassLoader.class;
+        Class<URLClassLoader> sysclass = URLClassLoader.class;
 
         try {
-            Method method = sysclass.getDeclaredMethod("addURL", new Class[]{URL.class});
+            Method method = sysclass.getDeclaredMethod("addURL", new Class<?>[]{URL.class});
             method.setAccessible(true);
             for (URL url : urls) {
                 method.invoke(sysloader, new Object[]{url});
@@ -163,6 +166,7 @@ public class BNDAnnotationProcessor
         }
     }
 
+    @SuppressWarnings("unchecked")
     private List<File> getAllClasses(File f) {
         if (f.isDirectory()) {
             LinkedList<File> files = new LinkedList<File>();
