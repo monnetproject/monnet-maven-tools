@@ -14,7 +14,7 @@
   <distributionManagement>
      <repository>
         <id>apache</id>
-        <url>file:/var/www/johmcc/mvn/</url>
+        <url>file:/var/www/mvn/</url>
      </repository>
   </distributionManagement>
     <modules>
