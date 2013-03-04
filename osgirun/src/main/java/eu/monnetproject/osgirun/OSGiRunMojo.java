@@ -388,6 +388,7 @@ public class OSGiRunMojo
         if (integrationTest) {
             getLog().info("Setting integration testing to true");
             System.setProperty("eu.monnetproject.framework.test", "true");
+            System.setProperty("osgitest.shutdownOnFinish","true");
         }
     }
 }
