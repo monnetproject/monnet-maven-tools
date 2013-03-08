@@ -41,11 +41,11 @@ A different framework can be chosen as follows
 
 If you do not wish to start Felix's TUI then also include the flag
 
-   mvn osgirun:run -Dosgirun.felixBundles=false
+    mvn osgirun:run -Dosgirun.felixBundles=false
 
 Finally, if you have bundles that are part of the build but not compatible with OSGi you may exclude them as follows
 
-   mvn osgirun:run -Dosgirun.excludeBundles=artifactId1,artifactId2
+    mvn osgirun:run -Dosgirun.excludeBundles=artifactId1,artifactId2
 
 ### Integration testing
 
