@@ -10,14 +10,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-        
-  <distributionManagement>
-     <repository>
-        <id>apache</id>
-        <url>file:/var/www/mvn/</url>
-     </repository>
-  </distributionManagement>
-    <modules>
+
+   <modules>
         <module>bndannotation</module>    
         <module>osgirun</module>
     </modules>

@@ -1,56 +1,127 @@
-<?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.github.monnetproject</groupId>
-    <artifactId>maven-tools</artifactId>
-    <version>1.12.2</version>
-    <relativePath>..</relativePath>
-  </parent>
+
+  <groupId>com.github.monnetproject</groupId>
   <artifactId>osgirun</artifactId>
-  <packaging>maven-plugin</packaging>
+  <version>1.18.4</version>
+  <packaging>jar</packaging>
+
   <name>osgirun Maven Mojo</name>
-  <url>http://maven.apache.org</url>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-plugin-api</artifactId>
-      <version>2.2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.felix</groupId>
-      <artifactId>org.apache.felix.framework</artifactId>
-      <version>4.0.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-project</artifactId>
-      <version>2.2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>biz.aQute</groupId>
-      <artifactId>bndlib</artifactId>
-      <version>1.50.0</version>
-    </dependency>
-  </dependencies>
+  <description>osgirun Maven Mojo from the Monnet Project's maven-tools project.</description>
+  <url>https://github.com/monnetproject/maven-tools</url>
+
+  <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <scala.version>2.9.0</scala.version>
+  </properties>
+
+  <licenses>
+    <license>
+      <name>BSD 3-clause "New" or "Revised" License</name>
+      <url>https://github.com/monnetproject/maven-tools/blob/master/LICENSE</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>John P. McCrae</name>
+      <email>john@mccr.ae</email>
+      <organization>Insight Centre for Data Analytics, NUI Galway</organization>
+      <organizationUrl>http://www.insight-centre.org/</organizationUrl>
+    </developer>
+  </developers>
+
+  <scm>
+      <connection>scm:git:git://github.com/monnetproject/maven-tools.git</connection>
+      <developerConnection>scm:git:ssh://github.com:monnetproject/maven-tools.git</developerConnection>
+      <url>http://github.com/monnetproject/maven-tools/tree/master</url>
+   </scm>
+
+   <build>
+       <plugins>
+           <plugin>
+               <groupId>org.sonatype.plugins</groupId>
+               <artifactId>nexus-staging-maven-plugin</artifactId>
+               <version>1.6.7</version>
+               <extensions>true</extensions>
+               <configuration>
+                   <serverId>ossrh</serverId>
+                   <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                   <autoReleaseAfterClose>true</autoReleaseAfterClose>
+               </configuration>
+           </plugin>
+           <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-source-plugin</artifactId>
+               <version>2.2.1</version>
+               <executions>
+                   <execution>
+                       <id>attach-sources</id>
+                       <goals>
+                           <goal>jar-no-fork</goal>
+                       </goals>
+                   </execution>
+               </executions>
+           </plugin>
+           <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-javadoc-plugin</artifactId>
+               <version>2.9.1</version>
+               <executions>
+                   <execution>
+                       <id>attach-javadocs</id>
+                       <goals>
+                           <goal>jar</goal>
+                       </goals>
+                   </execution>
+               </executions>
+           </plugin>
+           <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-gpg-plugin</artifactId>
+               <version>1.5</version>
+               <executions>
+                   <execution>
+                       <id>sign-artifacts</id>
+                       <phase>verify</phase>
+                       <goals>
+                           <goal>sign</goal>
+                       </goals>
+                   </execution>
+               </executions>
+           </plugin>
+
+
+       </plugins>
+   </build>
+
+   <dependencies>
+
+<dependency>
+    <groupId>org.apache.maven</groupId>
+    <artifactId>maven-plugin-api</artifactId>
+    <version>2.2.1</version>
+</dependency><dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>3.8.1</version>
+    <scope>test</scope>
+</dependency><dependency>
+    <groupId>org.apache.felix</groupId>
+    <artifactId>org.apache.felix.framework</artifactId>
+    <version>4.0.2</version>
+</dependency><dependency>
+    <groupId>org.apache.maven</groupId>
+    <artifactId>maven-project</artifactId>
+    <version>2.2.1</version>
+</dependency><dependency>
+    <groupId>biz.aQute</groupId>
+    <artifactId>bndlib</artifactId>
+    <version>1.50.0</version>
+</dependency>
+   </dependencies>
 </project>
+
